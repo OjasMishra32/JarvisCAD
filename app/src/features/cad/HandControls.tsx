@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { useThree, useFrame } from '@react-three/fiber';
+import React, { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
 import { useHandStore } from '../../store/handStore';
-import * as THREE from 'three';
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 interface HandControlsProps {
@@ -11,7 +10,6 @@ interface HandControlsProps {
 export const HandControls: React.FC<HandControlsProps> = ({ controlsRef }) => {
     const { activeGesture, cursorPosition } = useHandStore();
     const prevCursorPos = useRef<{ x: number, y: number } | null>(null);
-    const { camera } = useThree();
 
     useFrame(() => {
         if (!controlsRef.current) return;
@@ -22,12 +20,13 @@ export const HandControls: React.FC<HandControlsProps> = ({ controlsRef }) => {
                 const deltaX = (cursorPosition.x - prevCursorPos.current.x) * 5; // Sensitivity
                 const deltaY = (cursorPosition.y - prevCursorPos.current.y) * 5;
 
-                // OrbitControls uses spherical coordinates
-                // rotateLeft changes azimuthal angle
-                // rotateUp changes polar angle
-                controlsRef.current.rotateLeft(deltaX); 
-                controlsRef.current.rotateUp(deltaY);
-                controlsRef.current.update();
+                // Cast to any to access internal rotation methods if types are missing
+                const controls = controlsRef.current as any;
+                if (controls.rotateLeft && controls.rotateUp) {
+                    controls.rotateLeft(deltaX); 
+                    controls.rotateUp(deltaY);
+                    controls.update();
+                }
             }
             prevCursorPos.current = cursorPosition;
         } else {

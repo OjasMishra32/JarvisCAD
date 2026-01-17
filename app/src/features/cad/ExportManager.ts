@@ -25,7 +25,20 @@ export const useExport = () => {
         });
 
         const result = exporter.parse(scene, { binary: true });
-        const blob = new Blob([result], { type: 'application/octet-stream' });
+        
+        // Handle result type (string or DataView)
+        // If binary: true, it returns DataView
+        // We need to ensure we pass a valid BlobPart
+        const blobParts: BlobPart[] = [];
+        
+        if (result instanceof DataView) {
+            blobParts.push(result.buffer as ArrayBuffer);
+        } else {
+            blobParts.push(result);
+        }
+
+        const blob = new Blob(blobParts, { type: 'application/octet-stream' });
+        
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = 'starkcad-model.stl';

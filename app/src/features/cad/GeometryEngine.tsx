@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import * as THREE from 'three';
-import { useCADStore, SolidPrimitive, SketchPrimitive } from '../../store/cadStore';
+import { useCADStore } from '../../store/cadStore';
+import type { SolidPrimitive, SketchPrimitive } from '../../store/cadStore';
 import { Line } from '@react-three/drei';
 
 export const GeometryRenderer: React.FC = () => {

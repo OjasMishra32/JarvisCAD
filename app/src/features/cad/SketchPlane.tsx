@@ -1,14 +1,15 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { useHandStore } from '../../store/handStore';
-import { useCADStore, Point3D } from '../../store/cadStore';
+import { useCADStore } from '../../store/cadStore';
+import type { Point3D } from '../../store/cadStore'; // Fix type import
 import * as THREE from 'three';
 import { Line } from '@react-three/drei';
 
 export const SketchPlane: React.FC = () => {
   const { cursorPosition, activeGesture } = useHandStore();
   const { activeTool, addSketch } = useCADStore();
-  const { camera, scene } = useThree();
+  const { camera } = useThree();
   
   const planeRef = useRef<THREE.Mesh>(null);
   const [currentPoints, setCurrentPoints] = useState<THREE.Vector3[]>([]);
@@ -31,11 +32,6 @@ export const SketchPlane: React.FC = () => {
     if (intersects.length > 0) {
       const point = intersects[0].point;
       
-      // LOGIC:
-      // PINCH START -> Start Drawing
-      // PINCH HOLD -> Dragging (Preview)
-      // PINCH RELEASE -> Finish Drawing
-      
       const isPinching = activeGesture === 'PINCH';
       
       if (isPinching && !isSketching.current) {
@@ -52,14 +48,10 @@ export const SketchPlane: React.FC = () => {
         const end = point; // Last known point
         
         // Commit to Store
-        // Convert THREE.Vector3 to Point3D
-        const p1 = { x: start.x, y: start.y, z: start.z };
-        const p2 = { x: end.x, y: end.y, z: end.z };
+        const p1: Point3D = { x: start.x, y: start.y, z: start.z };
+        const p2: Point3D = { x: end.x, y: end.y, z: end.z };
         
         if (activeTool === 'SKETCH_RECT') {
-            // Create 4 points for rect
-            // Simplified: Just store diagonal for now or center/size
-            // Let's store as a RECT primitive
             addSketch({
                 type: 'RECT',
                 points: [p1, p2],
@@ -67,7 +59,6 @@ export const SketchPlane: React.FC = () => {
                 planeOrigin: { x: 0, y: 0, z: 0 }
             });
         } else {
-            // Default Line
              addSketch({
                 type: 'LINE',
                 points: [p1, p2],

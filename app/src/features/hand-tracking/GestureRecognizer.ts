@@ -1,10 +1,10 @@
-import { Landmark, GestureType } from '../../store/handStore';
+import type { Landmark, GestureType } from '../../store/handStore';
 
 // Landmark indices
 const WRIST = 0;
-const THUMB_CMC = 1;
-const THUMB_MCP = 2;
-const THUMB_IP = 3;
+// const THUMB_CMC = 1; // Unused
+// const THUMB_MCP = 2; // Unused
+// const THUMB_IP = 3; // Unused
 const THUMB_TIP = 4;
 const INDEX_MCP = 5;
 const INDEX_TIP = 8;
@@ -26,21 +26,11 @@ function distance(p1: Landmark, p2: Landmark): number {
   );
 }
 
-function isFingerExtended(landmarks: Landmark[], tipIdx: number, mcpIdx: number): boolean {
-  // Simple check: Tip is further from wrist than MCP is
-  const wrist = landmarks[WRIST];
-  const tip = landmarks[tipIdx];
-  const mcp = landmarks[mcpIdx];
-  
-  return distance(wrist, tip) > distance(wrist, mcp);
-}
-
 function isCurled(landmarks: Landmark[], tipIdx: number, mcpIdx: number): boolean {
     const wrist = landmarks[WRIST];
     const tip = landmarks[tipIdx];
     const mcp = landmarks[mcpIdx];
     // Tip closer to wrist than MCP implies curled for fingers (roughly)
-    // A better check involves checking the joint angles, but distance heuristic works for MVP
     return distance(wrist, tip) < distance(wrist, mcp);
 }
 
@@ -66,8 +56,6 @@ export function detectGesture(landmarks: Landmark[]): GestureType {
   }
 
   // Check for CLUTCH (Thumb touching Middle finger)
-  // Clutch usually implies "grabbing" the scene. 
-  // PRD says: Thumb-to-middle finger hold.
   if (clutchDist < CLUTCH_THRESHOLD) {
     return 'CLUTCH';
   }

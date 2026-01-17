@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MousePointer2, Box, Circle, Trash2, Undo2, Pencil, PenTool, Download } from 'lucide-react';
+import { MousePointer2, Box, Circle, Trash2, Pencil, Download } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useCADStore } from '../../store/cadStore';
 import { useExport } from '../cad/ExportManager';
@@ -20,6 +20,8 @@ export const RadialMenu: React.FC<RadialMenuProps> = ({ isOpen, x, y, onClose })
   const MENU_ITEMS = [
     { id: 'select', icon: MousePointer2, label: 'Select', color: 'text-cyan-400', action: (store: any) => store.setTool('SELECT') },
     { id: 'sketch', icon: Pencil, label: 'Sketch Line', color: 'text-green-400', action: (store: any) => store.setTool('SKETCH_LINE') },
+    // Removed duplicate rect since it wasn't working well with imports in original
+    // { id: 'rect', icon: PenTool, label: 'Sketch Rect', color: 'text-emerald-400', action: (store: any) => store.setTool('SKETCH_RECT') },
     { id: 'cube', icon: Box, label: 'Cube', color: 'text-blue-400', action: (store: any) => store.addSolid({ 
         type: 'CUBE', 
         position: { x: (Math.random()-0.5)*2, y: 0.5, z: (Math.random()-0.5)*2 }, 

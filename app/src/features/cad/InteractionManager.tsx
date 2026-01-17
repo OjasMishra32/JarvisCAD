@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
 import { useHandStore } from '../../store/handStore';
 import { useCADStore } from '../../store/cadStore';
@@ -6,7 +6,8 @@ import * as THREE from 'three';
 
 export const InteractionManager: React.FC = () => {
   const { cursorPosition, activeGesture } = useHandStore();
-  const { setHovered, select, clearSelection, activeTool, addSolid, removeEntity, selectedIds } = useCADStore();
+  // Removed unused imports: addSolid, removeEntity, selectedIds
+  const { setHovered, select, clearSelection, activeTool } = useCADStore();
   const { camera, scene } = useThree();
   const raycaster = useRef(new THREE.Raycaster());
   
